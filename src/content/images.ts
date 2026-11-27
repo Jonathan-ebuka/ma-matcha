@@ -11,9 +11,9 @@ export const img = {
     "width": 845
   },
   "croissant": {
-    "height": 1174,
+    "height": 2000,
     "src": "/menu/croissant.webp",
-    "width": 850
+    "width": 1448
   },
   "juices": {
     "height": 1134,
@@ -26,14 +26,14 @@ export const img = {
     "width": 1600
   },
   "members": {
-    "height": 1254,
+    "height": 2000,
     "src": "/menu/members.webp",
-    "width": 1110
+    "width": 1770
   },
   "pizza-box": {
-    "height": 1254,
+    "height": 2000,
     "src": "/menu/pizza-box.webp",
-    "width": 1000
+    "width": 1595
   },
   "pouches": {
     "height": 1250,
@@ -61,9 +61,9 @@ export const img = {
     "width": 2000
   },
   "sliders": {
-    "height": 1170,
+    "height": 2000,
     "src": "/menu/sliders.webp",
-    "width": 1070
+    "width": 1829
   },
   "strawberry-matcha": {
     "height": 895,
@@ -71,9 +71,9 @@ export const img = {
     "width": 655
   },
   "tuna-melt": {
-    "height": 643,
+    "height": 1181,
     "src": "/menu/tuna-melt.webp",
-    "width": 1089
+    "width": 2000
   },
   "ube": {
     "height": 1513,
