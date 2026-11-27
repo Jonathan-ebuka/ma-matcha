@@ -36,9 +36,9 @@ export const img = {
     "width": 1595
   },
   "pouches": {
-    "height": 1250,
+    "height": 2000,
     "src": "/menu/pouches.webp",
-    "width": 1170
+    "width": 1872
   },
   "pour": {
     "height": 1500,
@@ -46,9 +46,9 @@ export const img = {
     "width": 1186
   },
   "powder": {
-    "height": 1038,
+    "height": 1774,
     "src": "/menu/powder.webp",
-    "width": 1170
+    "width": 2000
   },
   "salted-maple": {
     "height": 1091,
