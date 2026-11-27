@@ -66,32 +66,19 @@ export const insider = {
   follow: "Follow @mamatcha.cafe",
 };
 
-export const features = [
-  {
-    title: ["Ceremonial", "matcha"],
-    body: "Stone-ground Japanese green tea, whisked to order — the same powder you can take home.",
-  },
-  {
-    title: ["Cream", "tops"],
-    body: "Ube, coconut cloud, cookie butter. A little situation on top makes everything better.",
-  },
-  {
-    title: ["Food worth", "the trip"],
-    body: "Dirty seafood rice, mini sliders, pizza and the members' secret-favourite tuna melt.",
-  },
-  {
-    title: ["Made in", "Lekki"],
-    body: "30 Fola Osibo Road, Lekki Phase 1. Dine in, pick up or have it delivered.",
-  },
-];
-
-export const lineup = {
-  title: ["Matcha, just the", "way you like it."],
-  accent: "What's your special?",
-  left: { cutout: img["strawberry-matcha"], label: ["Strawberry", "Matcha"] },
-  centre: img.ube,
-  right: { cutout: img["cookie-butter"], label: ["Cookie", "Butter"] },
-};
+/** Scroll-built drink: frame ranges come from /public/build (145 frames). */
+export const build = {
+  frames: 145,
+  stages: [
+    { key: "ice", step: "Ice", from: 0, to: 20, title: ["Ice", "cold"], body: "Every cup starts with a full scoop of ice. Non-negotiable.", note: "one scoop… ok, two" },
+    { key: "milk", step: "Milk", from: 20, to: 52, title: ["Creamy", "base"], body: "Cold milk poured to the line — smooth, never watery.", note: "pour it slow" },
+    { key: "matcha", step: "Matcha", from: 52, to: 72, title: ["Ceremonial", "matcha"], body: "Stone-ground Japanese matcha, whisked to order and poured over the top.", note: "the good stuff" },
+    { key: "ube", step: "Ube", from: 72, to: 94, title: ["Ube", "situation"], body: "A little ube situation on top. You know you want it.", note: "ube > everything" },
+    { key: "foam", step: "Foam", from: 94, to: 118, title: ["Cloud", "foam"], body: "A soft, airy cold-foam cloud. Yes, it's as good as it looks.", note: "cloud mode" },
+    { key: "crumbs", step: "Crumbs", from: 118, to: 144, title: ["The", "crunch"], body: "Cookie crumbs to finish it off. Dip. Sip. Repeat.", note: "crunch time" },
+  ],
+  end: { title: ["Your usual,", "built from scratch."], note: ["Made to order", "in Lekki"] },
+}; // TODO confirm stage copy
 
 export const compare = {
   image: img.pouches,

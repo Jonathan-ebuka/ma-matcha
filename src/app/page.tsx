@@ -2,7 +2,7 @@ import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Insider from "@/components/Insider";
-import Sequence from "@/components/Sequence";
+import DrinkBuild from "@/components/DrinkBuild";
 import Compare from "@/components/Compare";
 import Picker from "@/components/Picker";
 import Food from "@/components/Food";
@@ -19,7 +19,7 @@ export default function Home() {
       <main>
         <Hero />
         <Insider />
-        <Sequence />
+        <DrinkBuild />
         <Compare />
         <Picker />
         <Food />
