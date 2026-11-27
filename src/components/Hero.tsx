@@ -2,118 +2,13 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import Logo from "@/components/Logo";
+import { gsap, SplitText, useGSAP } from "@/lib/gsap";
+import { pageReady } from "@/lib/loader";
+import { drinks, hero, site } from "@/content/site";
+import { ArrowButton, HandNote, Squiggle, Wordmark } from "@/components/ui";
+import ArcBand from "@/components/ArcBand";
 
-/*
- * Layout is drawn on two fixed "stages" (desktop 16:9, mobile 9:14).
- * The SVG (blob + arched text) and the cups share the same box, so
- * percentages on the cups line up with the SVG viewBox at any size.
- */
-
-type Cup = {
-  key: string;
-  name: string;
-  src: string;
-  width: number;
-  height: number;
-  /** position + size in % of the stage; r = base tilt in deg */
-  mobile: { x: number; y: number; w: number; r: number };
-  desktop: { x: number; y: number; w: number; r: number };
-  depth: number;
-  z: string;
-};
-
-const CUPS: Cup[] = [
-  {
-    key: "breakfast",
-    name: "Breakfast in a Cup",
-    src: "/drinks/breakfast.webp",
-    width: 558,
-    height: 771,
-    mobile: { x: 25, y: 14, w: 33, r: -14 },
-    desktop: { x: 20, y: 17, w: 16.5, r: -16 },
-    depth: 0.6,
-    z: "z-10",
-  },
-  {
-    key: "berry",
-    name: "Berry Blast",
-    src: "/drinks/berry.webp",
-    width: 524,
-    height: 701,
-    mobile: { x: 49, y: 40, w: 45, r: 0 },
-    desktop: { x: 50, y: 30, w: 21, r: 0 },
-    depth: 1,
-    z: "z-20",
-  },
-  {
-    key: "tropics",
-    name: "From the Tropics",
-    src: "/drinks/tropics.webp",
-    width: 513,
-    height: 699,
-    mobile: { x: 79, y: 27, w: 29, r: 12 },
-    desktop: { x: 80.5, y: 41, w: 15.5, r: 10 },
-    depth: 0.75,
-    z: "z-10",
-  },
-];
-
-const ARC_TEXT = "MA MATCHA · SIP · MA MATCHA";
-
-function Backdrop({
-  id,
-  viewBox,
-  blob,
-  arc,
-  origin,
-  fontSize,
-  className,
-}: {
-  id: string;
-  viewBox: string;
-  blob: string;
-  arc: string;
-  origin: string;
-  fontSize: number;
-  className: string;
-}) {
-  return (
-    <svg
-      viewBox={viewBox}
-      preserveAspectRatio="xMidYMax meet"
-      className={`absolute inset-0 h-full w-full overflow-visible ${className}`}
-      aria-hidden="true"
-    >
-      <g className="hero-blob">
-        {/* thick round-joined stroke = soft rounded corners on the polygon */}
-        <path
-          d={blob}
-          fill="var(--color-sun)"
-          stroke="var(--color-sun)"
-          strokeWidth={90}
-          strokeLinejoin="round"
-        />
-      </g>
-
-      <path id={id} d={arc} fill="none" />
-      <g className="hero-arc-scroll" data-origin={origin}>
-        <g className="hero-arc js-intro" data-origin={origin}>
-          <text
-            fill="var(--color-ink)"
-            fontSize={fontSize}
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            <textPath href={`#${id}`} startOffset="50%" textAnchor="middle">
-              {ARC_TEXT}
-            </textPath>
-          </text>
-        </g>
-      </g>
-    </svg>
-  );
-}
+const cup = drinks.berry;
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -121,110 +16,55 @@ export default function Hero() {
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      const origin = (_: number, el: Element) =>
-        (el as SVGElement).dataset.origin ?? "0 0";
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // ---- Intro ------------------------------------------------------
-        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        const q = gsap.utils.selector(root);
+        const chars = SplitText.create(q("[data-hero-word]"), { type: "chars", mask: "chars" });
+        const lines = SplitText.create(q("[data-hero-head] > span"), { type: "lines", mask: "lines" });
 
-        tl.fromTo(
-          ".hero-blob",
-          { scale: 0.82, y: 120, transformOrigin: "50% 100%" },
-          { scale: 1, y: 0, duration: 1.4 },
-        )
-          .fromTo(
-            ".hero-arc",
-            { rotation: -70, svgOrigin: origin, autoAlpha: 0 },
-            { rotation: 0, svgOrigin: origin, autoAlpha: 1, duration: 1.8, ease: "expo.out" },
-            0.15,
-          )
-          .fromTo(
-            ".cup-intro",
-            { yPercent: 140, rotation: (i: number) => [-25, 0, 25][i], autoAlpha: 0 },
-            {
-              yPercent: 0,
-              rotation: 0,
-              autoAlpha: 1,
-              duration: 1.4,
-              ease: "back.out(1.3)",
-              stagger: { each: 0.12, from: "center" },
-            },
-            0.3,
-          )
-          .fromTo(
-            ".hero-fade",
-            { autoAlpha: 0, y: (i: number) => (i === 0 ? -16 : 16) },
-            { autoAlpha: 1, y: 0, duration: 1 },
-            0.9,
-          );
+        gsap.set("[data-hero-ring] circle", { drawSVG: "0%" });
 
-        // ---- Idle float -------------------------------------------------
-        gsap.utils.toArray<HTMLElement>(".cup-float").forEach((el, i) => {
-          gsap.to(el, {
-            y: -14 - i * 2,
-            rotation: i % 2 ? -1.6 : 1.6,
-            duration: 2.8 + i * 0.45,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true,
-            delay: 1.4 + i * 0.2,
-          });
-        });
+        const intro = gsap.timeline({ paused: true, defaults: { ease: "expo.out" } });
+        intro
+          .set(".js-intro", { autoAlpha: 1 })
+          .from(chars.chars, { yPercent: 105, duration: 1.4, stagger: 0.045 })
+          .from("[data-hero-cta]", { scale: 0, duration: 1, ease: "back.out(2)" }, 0.45)
+          .to("[data-hero-ring] circle", { drawSVG: "100%", duration: 2.2, ease: "power3.inOut" }, 0.2)
+          .from("[data-hero-cup]", { yPercent: 70, rotation: 25, autoAlpha: 0, duration: 1.8 }, 0.35)
+          .from("[data-hero-stat]", { scale: 0, duration: 1.1, ease: "back.out(1.6)", stagger: 0.1 }, 0.75)
+          .from(lines.lines, { yPercent: 100, duration: 1.2, stagger: 0.08 }, 0.6)
+          .from("[data-hero-body]", { autoAlpha: 0, y: 20, duration: 1 }, 0.95)
+          .from("[data-hero] [data-draw]", { drawSVG: "0%", duration: 1.2, ease: "power2.inOut", stagger: 0.1 }, 1.1)
+          .from("[data-hero] [data-hand] span", { autoAlpha: 0, x: -10, duration: 0.6, stagger: 0.12 }, 1);
 
-        gsap.to(".scroll-cue-dot", {
-          y: 10,
-          duration: 1.1,
+        pageReady.then(() => intro.play());
+
+        // Scroll: cup lifts and spins out of the frame, wordmark drifts slower.
+        gsap
+          .timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+          })
+          .to("[data-hero-cup-scroll]", { yPercent: -38, rotation: 28 }, 0)
+          .to("[data-hero-word]", { yPercent: 35 }, 0)
+          .to("[data-hero-ring]", { rotation: 40 }, 0)
+          .to("[data-hero-stat-wrap]", { y: (i) => -60 - i * 50 }, 0);
+
+        // idle bob
+        gsap.to("[data-hero-cup]", {
+          y: -12,
+          rotation: 2,
+          duration: 3,
           ease: "sine.inOut",
           repeat: -1,
           yoyo: true,
         });
 
-        // ---- Scroll: cups drift apart, text keeps turning ---------------
-        const scroll = gsap.timeline({
-          defaults: { ease: "none" },
-          scrollTrigger: {
-            trigger: root.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.8,
-          },
-        });
-        scroll
-          .to(".cup-scroll-0", { xPercent: -35, yPercent: -40, rotation: -14 }, 0)
-          .to(".cup-scroll-1", { yPercent: -18, scale: 1.12 }, 0)
-          .to(".cup-scroll-2", { xPercent: 35, yPercent: -30, rotation: 14 }, 0)
-          .to(".hero-arc-scroll", { rotation: 20, svgOrigin: origin }, 0)
-          .to(".hero-blob", { y: 60 }, 0)
-          .to(".hero-fade", { autoAlpha: 0, duration: 0.3 }, 0);
+        return () => {
+          chars.revert();
+          lines.revert();
+        };
       });
-
-      // ---- Pointer parallax (mouse/trackpad only) -------------------------
-      mm.add(
-        "(prefers-reduced-motion: no-preference) and (pointer: fine)",
-        () => {
-          const cups = gsap.utils.toArray<HTMLElement>(".cup-parallax");
-          const setters = cups.map((el) => ({
-            depth: Number(el.dataset.depth),
-            x: gsap.quickTo(el, "x", { duration: 0.9, ease: "power3.out" }),
-            y: gsap.quickTo(el, "y", { duration: 0.9, ease: "power3.out" }),
-          }));
-
-          const onMove = (e: PointerEvent) => {
-            const nx = e.clientX / window.innerWidth - 0.5;
-            const ny = e.clientY / window.innerHeight - 0.5;
-            setters.forEach((s) => {
-              s.x(nx * 40 * s.depth);
-              s.y(ny * 26 * s.depth);
-            });
-          };
-          window.addEventListener("pointermove", onMove);
-          return () => window.removeEventListener("pointermove", onMove);
-        },
-      );
-
-      // Fonts/images can shift layout after first paint.
-      document.fonts?.ready.then(() => ScrollTrigger.refresh());
     },
     { scope: root },
   );
@@ -232,87 +72,115 @@ export default function Hero() {
   return (
     <section
       ref={root}
-      className="relative isolate h-svh min-h-[560px] w-full overflow-hidden bg-background"
-      aria-label="Ma Matcha smoothies"
+      data-hero
+      className="grain relative isolate overflow-hidden bg-sage pt-28 md:pt-[84px]"
+      aria-label="Ma Matcha"
     >
-      <noscript>
-        <style>{`.js-intro{opacity:1!important;visibility:visible!important}`}</style>
-      </noscript>
-
-      {/* Logo */}
-      <header className="hero-fade js-intro absolute inset-x-0 top-0 z-30 flex justify-center pt-6 md:pt-8">
-        <Logo />
-      </header>
+      {/* Wordmark + CTA */}
+      <div className="relative z-10 flex flex-col items-center px-4">
+        <h1 className="sr-only">Ma Matcha — smoothies with personality</h1>
+        <div
+          data-hero-word
+          aria-hidden="true"
+          className="js-intro text-center text-[19vw] text-forest md:text-[min(12.4vw,190px)]"
+        >
+          <Wordmark />
+        </div>
+        <div data-hero-cta className="js-intro mt-8 md:mt-6">
+          <ArrowButton href={site.orderHref} target="_blank" rel="noreferrer" size="lg">
+            Order now
+          </ArrowButton>
+        </div>
+      </div>
 
       {/* Stage */}
-      <div className="absolute bottom-0 left-1/2 aspect-[9/14] w-[min(100vw,62svh)] -translate-x-1/2 md:aspect-video md:w-[min(100vw,178svh)]">
-        <Backdrop
-          id="arc-mobile"
-          className="md:hidden"
-          viewBox="0 0 900 1400"
-          blob="M20 1500 L70 900 L230 720 L560 680 L800 790 L880 1500 Z"
-          arc="M80 1560 A440 440 0 1 1 820 1560"
-          origin="450 1380"
-          fontSize={74}
-        />
-        <Backdrop
-          id="arc-desktop"
-          className="hidden md:block"
-          viewBox="0 0 1600 900"
-          blob="M190 960 L275 600 L440 470 L740 420 L1010 425 L1290 560 L1470 960 Z"
-          arc="M310 1130 A520 520 0 1 1 1290 1130"
-          origin="800 950"
-          fontSize={104}
-        />
-
-        {CUPS.map((cup, i) => (
-          <div
-            key={cup.key}
-            className={`cup-scroll-${i} absolute -translate-x-1/2 ${cup.z}
-              left-[var(--x)] top-[var(--y)] w-[var(--w)] rotate-[var(--r)]
-              md:left-[var(--mx)] md:top-[var(--my)] md:w-[var(--mw)] md:rotate-[var(--mr)]`}
-            style={
-              {
-                "--x": `${cup.mobile.x}%`,
-                "--y": `${cup.mobile.y}%`,
-                "--w": `${cup.mobile.w}%`,
-                "--r": `${cup.mobile.r}deg`,
-                "--mx": `${cup.desktop.x}%`,
-                "--my": `${cup.desktop.y}%`,
-                "--mw": `${cup.desktop.w}%`,
-                "--mr": `${cup.desktop.r}deg`,
-              } as React.CSSProperties
-            }
+      <div className="relative mx-auto mt-14 max-w-[1440px] md:mt-[2.6vw] md:h-[min(44vw,640px)]">
+        {/* Ring + cup */}
+        <div className="relative h-[118vw] md:absolute md:left-[21%] md:top-[3%] md:h-auto md:w-[46%]">
+          <svg
+            data-hero-ring
+            viewBox="0 0 100 100"
+            className="absolute left-1/2 top-[34vw] w-[128vw] -translate-x-1/2 md:top-0 md:w-full"
+            aria-hidden="true"
           >
-            <div className="cup-intro js-intro">
-              <div className="cup-parallax" data-depth={cup.depth}>
-                <div className="cup-float">
-                  <Image
-                    src={cup.src}
-                    alt={`${cup.name} smoothie`}
-                    width={cup.width}
-                    height={cup.height}
-                    priority
-                    sizes="(min-width: 768px) 22vw, 46vw"
-                    className="h-auto w-full select-none drop-shadow-[0_28px_28px_rgba(64,56,24,0.22)]"
-                    draggable={false}
-                  />
-                </div>
-              </div>
+            <circle cx="50" cy="50" r="48.6" fill="none" stroke="white" strokeWidth="2.2" transform="rotate(-90 50 50)" />
+          </svg>
+          {/* keeps the ring box square on desktop */}
+          <div className="hidden aspect-square md:block" />
+
+          <div
+            data-hero-cup-scroll
+            className="absolute left-1/2 top-0 z-30 w-[62vw] -translate-x-1/2 md:left-[47%] md:top-[-4%] md:w-[46%]"
+          >
+            <div data-hero-cup className="js-intro -rotate-[14deg]">
+              <Image
+                src={cup.cutout.src}
+                alt={`${cup.name} smoothie`}
+                width={cup.cutout.width}
+                height={cup.cutout.height}
+                priority
+                sizes="(min-width: 768px) 22vw, 62vw"
+                className="h-auto w-full drop-shadow-[0_40px_40px_rgba(35,72,33,0.28)]"
+              />
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* Stats */}
+        <div className="pointer-events-none relative z-30 -mt-[44vw] h-[64vw] md:absolute md:inset-0 md:mt-0 md:h-auto">
+          {hero.stats.map((s, i) => {
+            const pos = [
+              "left-[62%] top-0 md:left-[15.8%] md:top-[3%]",
+              "left-[35%] top-[16%] md:left-[7.6%] md:top-[13.5%]",
+              "left-[7%] top-[34%] md:left-[2.8%] md:top-[30%]",
+            ][i];
+            return (
+              <div key={s.label} data-hero-stat-wrap className={`absolute ${pos}`}>
+                <div
+                  data-hero-stat
+                  className="js-intro grid size-[30vw] place-content-center rounded-full bg-cream text-center text-forest md:size-[min(9.7vw,140px)]"
+                >
+                  <p className="type-display text-[10vw] leading-[0.85] md:text-[min(3.4vw,50px)]">
+                    {s.value}
+                    <span className="text-[0.55em]">{s.unit}</span>
+                  </p>
+                  <p className="text-[3.6vw] font-medium leading-tight tracking-tight md:text-[min(1.1vw,17px)]">
+                    {s.label}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <HandNote
+          lines={hero.note}
+          arrow="up-right"
+          className="relative z-30 ml-[52vw] -mt-[6vw] text-[6.4vw] md:absolute md:left-[2.8%] md:top-[2%] md:m-0 md:text-[min(2vw,30px)]"
+          arrowClassName="md:hidden"
+        />
+        <HandNote
+          lines={[]}
+          arrow="down-right"
+          className="absolute left-[3.6%] top-[13%] hidden text-[min(2vw,30px)] md:block"
+          arrowClassName="w-[min(3.4vw,50px)]"
+        />
+
+        {/* Headline */}
+        <div className="relative z-20 mt-10 px-6 pb-[34vw] text-center md:absolute md:right-[5%] md:top-[1%] md:mt-0 md:w-[30%] md:p-0">
+          <h2 data-hero-head className="type-display text-[15.5vw] md:text-[min(5.7vw,84px)]">
+            <span className="js-intro block text-cream">{hero.headline[0]}</span>
+            <span className="js-intro block text-forest">{hero.headline[1]}</span>
+            <span className="js-intro block text-forest">{hero.headline[2]}</span>
+          </h2>
+          <div data-hero-body className="js-intro mx-auto mt-5 max-w-[22em] md:mt-6">
+            <p className="type-title text-[5.6vw] text-forest md:text-[min(1.6vw,23px)]">{hero.body}</p>
+            <Squiggle className="ml-auto mr-[8%] mt-1 w-[34vw] text-cream md:w-[min(11vw,160px)]" />
+          </div>
+        </div>
       </div>
 
-      {/* Scroll cue */}
-      <div className="hero-fade js-intro absolute inset-x-0 bottom-5 z-30 flex flex-col items-center gap-2 md:bottom-8">
-        <span className="text-[10px] font-semibold tracking-[0.32em] text-ink md:text-xs">
-          SCROLL TO DISCOVER
-        </span>
-        <span className="relative h-7 w-[1.5px] overflow-hidden rounded-full bg-ink/20">
-          <span className="scroll-cue-dot absolute left-0 top-0 h-3 w-full rounded-full bg-ink" />
-        </span>
-      </div>
+      <ArcBand text={hero.marquee} />
     </section>
   );
 }
