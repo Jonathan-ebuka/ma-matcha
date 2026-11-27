@@ -65,8 +65,8 @@ export default function Compare() {
         <div className="relative aspect-[4/5] overflow-hidden md:aspect-auto">
           <div data-compare-img className="absolute inset-x-0 -top-[6%] h-[115%]">
             <Image
-              src="/slides/intro.webp"
-              alt="The three Ma Matcha smoothies side by side"
+              src={compare.image.src}
+              alt={compare.imageAlt}
               fill
               sizes="(min-width: 768px) 45vw, 100vw"
               className="object-cover"

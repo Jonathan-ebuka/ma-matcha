@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { drinks, footer, site } from "@/content/site";
+import { footer, site } from "@/content/site";
 import { ArrowButton, SocialLinks, Wordmark } from "@/components/ui";
 
 function TileIcon({ name }: { name: string }) {
@@ -73,8 +73,8 @@ export default function Footer() {
               ))}
             </h2>
             <div data-foot-cups className="relative -mt-6 flex w-full max-w-[420px] items-end justify-center">
-              <Image src={drinks.breakfast.cutout.src} alt="" width={drinks.breakfast.cutout.width} height={drinks.breakfast.cutout.height} sizes="200px" className="relative z-10 h-auto w-[46%] -rotate-6 drop-shadow-[0_30px_30px_rgba(0,0,0,0.25)]" />
-              <Image src={drinks.berry.cutout.src} alt="" width={drinks.berry.cutout.width} height={drinks.berry.cutout.height} sizes="200px" className="-ml-[8%] h-auto w-[40%] rotate-6 drop-shadow-[0_30px_30px_rgba(0,0,0,0.25)]" />
+              <Image src={footer.cups[0].src} alt="" width={footer.cups[0].width} height={footer.cups[0].height} sizes="200px" className="relative z-10 h-auto w-[42%] -rotate-6 drop-shadow-[0_30px_30px_rgba(0,0,0,0.25)]" />
+              <Image src={footer.cups[1].src} alt="" width={footer.cups[1].width} height={footer.cups[1].height} sizes="200px" className="-ml-[6%] h-auto w-[42%] rotate-6 drop-shadow-[0_30px_30px_rgba(0,0,0,0.25)]" />
             </div>
             <div className="mt-auto pt-6">
               <ArrowButton href={site.orderHref} target="_blank" rel="noreferrer" tone="white" size="lg">
@@ -91,6 +91,8 @@ export default function Footer() {
               <a
                 key={t.href}
                 href={t.href}
+                target={t.href.startsWith("http") ? "_blank" : undefined}
+                rel="noreferrer"
                 data-foot-tile
                 className="flex aspect-[1/1] w-[40vw] flex-col items-center justify-end gap-3 rounded-lg bg-white pb-5 transition-transform duration-300 hover:-translate-y-1 md:w-[min(9.6vw,138px)]"
               >

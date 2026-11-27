@@ -3,17 +3,15 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
-import { drinks, profiles } from "@/content/site";
+import { profiles, specials } from "@/content/site";
 import { ArrowIcon, HandNote } from "@/components/ui";
 
 const cards = [
   { ...profiles.intro, img: null },
-  { name: drinks.tropics.name, tagline: drinks.tropics.tagline, aside: drinks.tropics.aside, img: drinks.tropics.cutout },
-  { name: drinks.berry.name, tagline: drinks.berry.tagline, aside: drinks.berry.aside, img: drinks.berry.cutout },
-  { name: drinks.breakfast.name, tagline: drinks.breakfast.tagline, aside: drinks.breakfast.aside, img: drinks.breakfast.cutout },
+  ...specials.map((s) => ({ name: s.name, tagline: s.note, aside: "Matcha special", img: s.cutout })),
 ];
 
-/** Big photo headline + a row of "dating profile" cards (in place of customer reviews). */
+/** Big photo headline + a row of matcha-special cards (in place of customer reviews). */
 export default function Profiles() {
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -74,16 +72,16 @@ export default function Profiles() {
         <HandNote lines={[profiles.eyebrow]} className="text-[6vw] text-cream md:text-[min(2vw,28px)]" />
         <h2
           data-prof-title
-          className="type-title relative z-10 mx-auto mt-4 max-w-[9ch] text-[21vw] leading-[0.84] md:max-w-none md:text-[min(12vw,170px)]"
+          className="type-title relative z-10 mx-auto mt-4 max-w-[9ch] text-[21vw] leading-[0.84] md:max-w-none md:text-[min(9.5vw,140px)]"
         >
           {profiles.title.join(" ")}
         </h2>
         <div data-prof-cup className="relative z-20 mx-auto -mt-[14vw] w-[52vw] md:-mt-[min(6vw,90px)] md:w-[min(17vw,250px)]">
           <Image
-            src={drinks.tropics.cutout.src}
+            src={profiles.cup.src}
             alt=""
-            width={drinks.tropics.cutout.width}
-            height={drinks.tropics.cutout.height}
+            width={profiles.cup.width}
+            height={profiles.cup.height}
             sizes="(min-width: 768px) 250px, 52vw"
             className="h-auto w-full drop-shadow-[0_40px_40px_rgba(0,0,0,0.3)]"
           />

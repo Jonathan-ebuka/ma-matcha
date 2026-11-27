@@ -3,14 +3,14 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
-import { drinks, insider, site } from "@/content/site";
+import { insider, site } from "@/content/site";
 import { ArrowButton, HandNote } from "@/components/ui";
 
 const cards = [
-  { d: drinks.tropics, cls: "md:left-[-4%] md:top-[6%] md:-rotate-[9deg]", m: "-rotate-[5deg]", speed: 40 },
-  { d: drinks.berry, cls: "md:left-[19%] md:top-[18%] md:rotate-[4deg]", m: "rotate-[4deg] ml-auto", speed: -30 },
-  { d: drinks.breakfast, cls: "md:left-[38%] md:top-0 md:-rotate-[3deg]", m: "-rotate-[3deg]", speed: 70 },
-];
+  { cls: "md:left-[-4%] md:top-[6%] md:-rotate-[9deg]", m: "-rotate-[5deg]", speed: 40 },
+  { cls: "md:left-[19%] md:top-[18%] md:rotate-[4deg]", m: "rotate-[4deg] ml-auto", speed: -30 },
+  { cls: "md:left-[38%] md:top-0 md:-rotate-[3deg]", m: "-rotate-[3deg]", speed: 70 },
+].map((c, i) => ({ ...c, photo: insider.photos[i], alt: insider.photoAlt[i] }));
 
 export default function Insider() {
   const root = useRef<HTMLElement>(null);
@@ -80,21 +80,16 @@ export default function Insider() {
       <div className="mx-auto mt-14 grid max-w-[1440px] gap-14 md:mt-20 md:grid-cols-[1.1fr_1fr] md:gap-0">
         {/* Photo cards */}
         <div className="relative flex flex-col gap-6 px-6 md:block md:h-[min(46vw,660px)] md:px-0">
-          {cards.map(({ d, cls, m }) => (
+          {cards.map(({ photo, alt, cls, m }) => (
             <div
-              key={d.name}
+              key={photo.src}
               data-insider-card
               className={`w-[72%] md:absolute md:w-[min(23vw,330px)] ${cls}`}
             >
               <figure className={`overflow-hidden rounded-md bg-white p-2 shadow-[0_24px_50px_-18px_rgba(35,72,33,0.35)] md:rotate-0 ${m}`}>
-                <Image
-                  src={d.slide}
-                  alt={`If you order ${d.name}: ${d.tagline}`}
-                  width={1170}
-                  height={1458}
-                  sizes="(min-width: 768px) 300px, 72vw"
-                  className="h-auto w-full rounded-sm"
-                />
+                <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
+                  <Image src={photo.src} alt={alt} fill sizes="(min-width: 768px) 330px, 72vw" className="object-cover" />
+                </div>
               </figure>
             </div>
           ))}

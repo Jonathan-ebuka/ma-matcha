@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
-import { drinks, features, lineup } from "@/content/site";
+import { features, lineup } from "@/content/site";
 import { HandNote, Smiley } from "@/components/ui";
 
 /**
@@ -148,15 +148,15 @@ export default function Sequence() {
         </h2>
 
         {/* side cups for the line-up */}
-        {([drinks.breakfast, drinks.tropics] as const).map((d, i) => (
+        {[lineup.left, lineup.right].map((d, i) => (
           <div
-            key={d.name}
+            key={d.cutout.src}
             data-seq-side
             className={`absolute top-[60svh] z-10 w-[36vw] md:top-[54svh] md:w-[min(15vw,220px)] ${
               i === 0 ? "left-[calc(50%-50vw+2vw)] md:left-[calc(50%-27vw)]" : "right-[calc(50%-50vw+2vw)] md:right-[calc(50%-27vw)]"
             }`}
           >
-            <Image src={d.cutout.src} alt={`${d.name} smoothie`} width={d.cutout.width} height={d.cutout.height} sizes="(min-width: 768px) 220px, 36vw" className="h-auto w-full drop-shadow-[0_30px_30px_rgba(35,72,33,0.25)]" />
+            <Image src={d.cutout.src} alt={d.label.join(" ")} width={d.cutout.width} height={d.cutout.height} sizes="(min-width: 768px) 220px, 36vw" className="h-auto w-full drop-shadow-[0_30px_30px_rgba(35,72,33,0.25)]" />
           </div>
         ))}
 
@@ -166,10 +166,10 @@ export default function Sequence() {
           className="absolute left-1/2 top-[74svh] z-30 w-[40vw] -translate-x-1/2 -translate-y-1/2 md:top-1/2 md:w-[min(19vw,280px)]"
         >
           <Image
-            src={drinks.berry.cutout.src}
-            alt={`${drinks.berry.name} smoothie`}
-            width={drinks.berry.cutout.width}
-            height={drinks.berry.cutout.height}
+            src={lineup.centre.src}
+            alt="Ube cream top iced matcha"
+            width={lineup.centre.width}
+            height={lineup.centre.height}
             sizes="(min-width: 768px) 280px, 44vw"
             className="h-auto w-full drop-shadow-[0_40px_40px_rgba(35,72,33,0.3)]"
           />
@@ -184,10 +184,10 @@ export default function Sequence() {
 
         {/* labels */}
         <div data-seq-label className="absolute left-[3%] top-[47svh] z-40 md:left-[14%] md:top-[47svh]">
-          <HandNote lines={["Breakfast", "in a Cup"]} arrow="down-right" className="text-[6vw] md:text-[min(2vw,28px)]" />
+          <HandNote lines={lineup.left.label} arrow="down-right" className="text-[6vw] md:text-[min(2vw,28px)]" />
         </div>
         <div data-seq-label className="absolute right-[4%] top-[38svh] z-40 text-right md:right-[13%] md:top-[36svh]">
-          <HandNote lines={["From the", "Tropics"]} arrow="down-left" className="text-[6vw] md:text-[min(2vw,28px)]" arrowClassName="ml-auto" />
+          <HandNote lines={lineup.right.label} arrow="down-left" className="text-[6vw] md:text-[min(2vw,28px)]" arrowClassName="ml-auto" />
         </div>
       </div>
     </section>

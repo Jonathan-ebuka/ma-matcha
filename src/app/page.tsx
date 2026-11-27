@@ -4,8 +4,10 @@ import Hero from "@/components/Hero";
 import Insider from "@/components/Insider";
 import Sequence from "@/components/Sequence";
 import Compare from "@/components/Compare";
-import Profiles from "@/components/Profiles";
 import Picker from "@/components/Picker";
+import Food from "@/components/Food";
+import Profiles from "@/components/Profiles";
+import TakeHome from "@/components/TakeHome";
 import GetIt from "@/components/GetIt";
 import Footer from "@/components/Footer";
 
@@ -19,8 +21,10 @@ export default function Home() {
         <Insider />
         <Sequence />
         <Compare />
-        <Profiles />
         <Picker />
+        <Food />
+        <Profiles />
+        <TakeHome />
         <GetIt />
       </main>
       <Footer />

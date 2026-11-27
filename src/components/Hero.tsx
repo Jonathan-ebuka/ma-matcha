@@ -4,11 +4,11 @@ import Image from "next/image";
 import { useRef } from "react";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { pageReady } from "@/lib/loader";
-import { drinks, hero, site } from "@/content/site";
+import { hero, site } from "@/content/site";
 import { ArrowButton, HandNote, Squiggle, Wordmark } from "@/components/ui";
 import ArcBand from "@/components/ArcBand";
 
-const cup = drinks.berry;
+const cup = hero.cup;
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -114,10 +114,10 @@ export default function Hero() {
           >
             <div data-hero-cup className="js-intro -rotate-[14deg]">
               <Image
-                src={cup.cutout.src}
-                alt={`${cup.name} smoothie`}
-                width={cup.cutout.width}
-                height={cup.cutout.height}
+                src={cup.src}
+                alt="Ube cream top iced matcha"
+                width={cup.width}
+                height={cup.height}
                 priority
                 sizes="(min-width: 768px) 22vw, 62vw"
                 className="h-auto w-full drop-shadow-[0_40px_40px_rgba(35,72,33,0.28)]"
